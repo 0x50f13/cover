@@ -1,3 +1,6 @@
+use std::fs;
+use std::io::Write;
+use std::fs::OpenOptions;
 use crate::ui;
 use crate::graph;
 use crate::point2d;
@@ -116,4 +119,45 @@ pub fn build_cover(_graph: &mut graph::Graph, data: &csv::CsvData, _n: usize, mu
     println!("  -Activation points number: {d}", d=n_marked);
     println!("  -Edges processed: {d}", d=n_edges);
     println!("  -Set unions performed: {d}", d=n_unions);
+}
+
+pub fn print_cover(_graph: &graph::Graph){
+    for _node in &_graph._dsu.nodes {
+         let node=_node.borrow();
+         if node.children.len()>0 {
+           println!("COMPONENT:");
+           for child in &node.children {
+               let dsu_node=child.borrow();
+               println!("{x} {y}", x=dsu_node.object.x, y=dsu_node.object.y);
+           }
+        }
+    }
+}
+
+pub fn export_cover(_graph: &graph::Graph, fname: &String){
+    println!("  -Export file:{s}",s=fname);
+    fs::write(fname,""); //Clear or create file
+    let mut file = OpenOptions::new()
+        .write(true)
+        .append(true)
+        .open(fname)
+        .unwrap();
+    let mut n_components=0;
+    let mut n_processed=0;
+    let n=_graph._dsu.nodes.len();
+    for _node in &_graph._dsu.nodes {
+         let node=_node.borrow();
+         if node.children.len()>0 {
+           writeln!(file,"COMPONENT:");
+           n_components+=1;
+           for child in &node.children {
+               let dsu_node=child.borrow();
+               writeln!(file, "{x},{y}", x=dsu_node.object.x, y=dsu_node.object.y);
+           }
+        }
+        n_processed+=1;
+        ui::print_pb("Exporting data              ".to_string(), n_processed, n as i32);
+    }
+    println!("");
+    println!("Succesfully exporeted {d} components",d=n_components);
 }

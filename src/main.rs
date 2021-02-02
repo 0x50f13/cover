@@ -18,10 +18,17 @@ fn str2f64(s: &str) -> f64{
     }
 }
 fn main() {
+    /*******CONFIG*******/
+    let EPS=30.0;
+    let MU=1.0;
+    let N_COLUMN=6;
+    let DATA="data/22ht1.csv";
+    let OUTPUT_FOLDER="output/";
+    /********************/
     println!("CoverSolver v1.0");
     let mut _dsu = dsu::DSU::<point2d::Point2D>::new();
     let mut _graph = graph::Graph::new();
-    let data = csv::read_csv("data/22ht1.csv".to_string());
+    let data = csv::read_csv(DATA.to_string());
     let mut n_processed = 0;
     //let mut v = Vec::new();
     for line in &data.lines {
@@ -37,7 +44,12 @@ fn main() {
 
     println!("");
     
-    cover::build_eps_graph(50.0, &_graph);
+    cover::build_eps_graph(EPS, &_graph);
     cover::eps_graph_verify(&_graph);
-    cover::build_cover(&mut _graph, &data, 6, 0.0);
+    for i in N_COLUMN..data.header.len(){
+        println!("Processing column {d}", d=i-N_COLUMN);
+        cover::build_cover(&mut _graph, &data, i, MU);
+        let fname=OUTPUT_FOLDER.to_string()+&i.to_string()+&".txt".to_string();
+        cover::export_cover(&_graph,&fname);
+    }
 }

@@ -15,7 +15,7 @@ pub type DSUNodeRef<T> = Rc<RefCell<DSUNode<T>>>;
 
 pub struct DSUNode<T>{
     parent: Option<DSUNodeRef<T>>,
-    object: T,
+    pub object: T,
     _id: usize,
     pub children: LinkedList<DSUNodeRef<T>>,
     pub marked: bool,
@@ -58,8 +58,8 @@ impl<T> DSUNode::<T>{
 }
 
 pub struct DSU<T>{
-    nodes: Vec<DSUNodeRef<T>>,
-    size: usize,
+    pub nodes: Vec<DSUNodeRef<T>>,
+    pub size: usize,
 }
 
 impl<T> DSU::<T>{
