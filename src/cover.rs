@@ -108,6 +108,10 @@ pub fn build_cover(_graph: &mut graph::Graph, data: &csv::CsvData, _n: usize, mu
                if dsu_node.marked {
                   drop(dsu_node);
                   n_unions+=1;
+                  //println!("{d}: Unite {f1},{f2} -> {f3},{f4}", d=n_unions, f1=neighbour.pos.x, f2=neighbour.pos.y, f3=node.pos.x, f4=node.pos.y);
+                  if(neighbour.pos.x==node.pos.x && neighbour.pos.y==node.pos.y){
+                      panic!("Union of node to self");
+                  }
                   _graph._dsu.unite(neighbour.dsu_ref.clone(), node.dsu_ref.clone());
                }
            }

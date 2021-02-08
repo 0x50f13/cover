@@ -33,16 +33,17 @@ impl<T> DSUNode::<T>{
     }
     pub fn owner(&self) -> Option<DSUNodeRef<T>>{
         if !self.has_parent(){
-            return None
+           return None;
         }
         let node_ref = try_unwrap_option(self.parent.clone()).unwrap().clone();
-        let ref2 = node_ref.clone();
-        let node=ref2.borrow();
-        //println!("New node id:{d}",d=node._id);
-        if !node.has_parent(){
-            return Some(node_ref.clone());
+        let node_mut = node_ref.clone(); 
+        let node=node_ref.borrow();
+        println!("New node id:{d}",d=node._id);
+        if node.has_parent(){
+           node.owner()
+        }else{
+           Some(node_mut)
         }
-        node.owner()
     }
     pub fn has_parent(&self) -> bool{
         match &self.parent {
@@ -90,16 +91,14 @@ impl<T> DSU::<T>{
            Some(__owner) => __owner.clone(),
        };
        //println!("owner={d1}",d1=t_owner.borrow()._id);
-       let mut r_node=t_node.try_borrow_mut();
-       let mut r_owner=t_owner.try_borrow_mut();
-       if r_node.is_err(){
-           return ;
-       }
-       if r_owner.is_err(){
-           return ;
-       }
-       let mut owner=r_owner.unwrap();
-       let mut node=r_node.unwrap();
+       let mut node=t_node.borrow_mut();
+       let mut owner=t_owner.borrow_mut();
+       if (*node)._id==(*owner)._id{
+           println!("{d1}->{d2}",d1=(*node)._id,d2=(*owner)._id);
+           panic!("Attempted to merge same owners");
+       }else{
+           println!("{d1}->{d2}",d1=(*node)._id,d2=(*owner)._id);
+        }
        owner.children.append(&mut node.children);
        owner.children.push_back(_node.clone());
        node.children.clear();
