@@ -64,6 +64,7 @@ impl Graph{
     }
     pub fn reset_dsu(&mut self){
         self._dsu=dsu::DSU::<point2d::Point2D>::new();
+        println!("Resetted dsu, n={d}",d=self._dsu.nodes.len());
         for node_ref in &self.nodes{
             let mut node = node_ref.borrow_mut();
             node.dsu_ref = self._dsu.add_node(node.pos.copy());

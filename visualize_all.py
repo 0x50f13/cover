@@ -11,13 +11,11 @@ def plot_component(data):
         Y.append(y)
     plt.scatter(np.array(X),np.array(Y))
 
-def main(argv) -> int:
+def visualize(fname):
     #print(len(argv))
-    if len(argv)<3:
-        print("Usage: %s input_file output_plot"%argv[0])
-        return -1
-    print("Reading file %s..."%argv[1])
-    with open(argv[1],"r") as f:
+    out="plots/"+fname.replace("txt","png")
+    print("Reading file %s..."%fname)
+    with open(fname,"r") as f:
         lines=f.readlines()
     print("OK!")
     components=[]
@@ -36,9 +34,19 @@ def main(argv) -> int:
     components.append(cur_component)
     for component in components:
         plot_component(component)
-    plt.savefig(argv[2])
+    plt.savefig(out)
     plt.close()
-    return 0
+
+def main(argv) -> int:
+    import glob
+    import os
+    if len(argv)<2:
+        print("Usage: %s [FOLDER WITH COMPONENTS]"%argv[0])
+    os.chdir(argv[1])
+    files=glob.glob("*.txt")
+    os.mkdir("plots")
+    for f in files:
+        visualize(f)
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

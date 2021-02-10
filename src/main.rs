@@ -19,10 +19,10 @@ fn str2f64(s: &str) -> f64{
 }
 fn main() {
     /*******CONFIG*******/
-    let EPS=100.0;
-    let MU=1.0;
-    let N_COLUMN=6;
-    let DATA="data/22ht1.csv";
+    let EPS=40.0;
+    let MU=0.9;
+    let N_COLUMN=7;
+    let DATA="data/22ht1_normalized.csv";
     let OUTPUT_FOLDER="output/";
     /********************/
     println!("CoverSolver v1.0");
@@ -32,8 +32,10 @@ fn main() {
     let mut n_processed = 0;
     //let mut v = Vec::new();
     for line in &data.lines {
-        let x=str2f64(&line.values[4]);
-        let y=str2f64(&line.values[5]);
+        let x=str2f64(&line.values[5]);
+        let y=str2f64(&line.values[6]);
+//        println!("x={d}",d=x);
+//        println!("y={d}",d=y);
         _graph.add_node(x,y);
         n_processed+=1;
         ui::print_pb("Adding points               ".to_string(), n_processed, data.n_lines-1);

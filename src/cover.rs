@@ -85,8 +85,8 @@ pub fn build_cover(_graph: &mut graph::Graph, data: &csv::CsvData, _n: usize, mu
         let activation = str2f64(&line.values[_n]);
         if activation>mu {
 //           println!("{d1}>{d2}",d1=activation,d2=mu);
-           let x=str2f64(&line.values[4]);
-           let y=str2f64(&line.values[5]);
+           let x=str2f64(&line.values[5]);
+           let y=str2f64(&line.values[6]);
            let point = point2d::Point2D::new(x,y);
            let mut node = try_unwrap_option(&_graph.map.get(&point)).unwrap().borrow_mut();
            let mut dsu_node = node.dsu_ref.borrow_mut();
@@ -97,8 +97,8 @@ pub fn build_cover(_graph: &mut graph::Graph, data: &csv::CsvData, _n: usize, mu
     for line in &data.lines {
         let activation = str2f64(&line.values[_n]);
         if activation>mu {
-           let x=str2f64(&line.values[4]);
-           let y=str2f64(&line.values[5]);
+           let x=str2f64(&line.values[5]);
+           let y=str2f64(&line.values[6]);
            let point = point2d::Point2D::new(x,y);
            let mut node = try_unwrap_option(&_graph.map.get(&point)).unwrap().borrow_mut();
            for edge in &node.edges {
