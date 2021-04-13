@@ -1,6 +1,6 @@
 nano.save
-output/*
-data/*
+output*
+data*
 target/*
 *.lock
 *.swp

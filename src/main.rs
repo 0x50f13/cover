@@ -20,7 +20,7 @@ fn str2f64(s: &str) -> f64{
 fn main() {
     /*******CONFIG*******/
     let EPS=40.0;
-    let MU=0.9;
+    let MU=0.4;
     let N_COLUMN=7;
     let DATA="data/22ht1_normalized.csv";
     let OUTPUT_FOLDER="output/";

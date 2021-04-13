@@ -13,6 +13,8 @@ def plot_component(data):
 
 def visualize(fname):
     #print(len(argv))
+    plt.ylim(0,1000)
+    plt.xlim(0,1400)
     out="plots/"+fname.replace("txt","png")
     print("Reading file %s..."%fname)
     with open(fname,"r") as f:
@@ -42,6 +44,7 @@ def main(argv) -> int:
     import os
     if len(argv)<2:
         print("Usage: %s [FOLDER WITH COMPONENTS]"%argv[0])
+        return -1
     os.chdir(argv[1])
     files=glob.glob("*.txt")
     os.mkdir("plots")
