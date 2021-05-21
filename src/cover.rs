@@ -81,25 +81,29 @@ pub fn build_cover(_graph: &mut graph::Graph, data: &csv::CsvData, _n: usize, mu
     let mut n_unions=0;
     let mut n_edges=0;
     let mut n_marked=0;
+    let mut n_line=0;
     for line in &data.lines {
         let activation = str2f64(&line.values[_n]);
         if activation>mu {
 //           println!("{d1}>{d2}",d1=activation,d2=mu);
+           let t=f64::from(line.n);
            let x=str2f64(&line.values[5]);
            let y=str2f64(&line.values[6]);
-           let point = point2d::Point2D::new(x,y);
+           let point = point2d::Point3D::new(x,y,t);
            let mut node = try_unwrap_option(&_graph.map.get(&point)).unwrap().borrow_mut();
            let mut dsu_node = node.dsu_ref.borrow_mut();
            dsu_node.mark();
            n_marked+=1;
         }
+        n_line+=1;
     }
     for line in &data.lines {
         let activation = str2f64(&line.values[_n]);
         if activation>mu {
+           let t=f64::from(line.n);
            let x=str2f64(&line.values[5]);
            let y=str2f64(&line.values[6]);
-           let point = point2d::Point2D::new(x,y);
+           let point = point2d::Point3D::new(x,y,t);
            let mut node = try_unwrap_option(&_graph.map.get(&point)).unwrap().borrow_mut();
            for edge in &node.edges {
                let neighbour = edge.dst.borrow();
@@ -109,7 +113,7 @@ pub fn build_cover(_graph: &mut graph::Graph, data: &csv::CsvData, _n: usize, mu
                   drop(dsu_node);
                   n_unions+=1;
                   //println!("{d}: Unite {f1},{f2} -> {f3},{f4}", d=n_unions, f1=neighbour.pos.x, f2=neighbour.pos.y, f3=node.pos.x, f4=node.pos.y);
-                  if(neighbour.pos.x==node.pos.x && neighbour.pos.y==node.pos.y){
+                  if(neighbour.pos.x==node.pos.x && neighbour.pos.y==node.pos.y && neighbour.pos.t==node.pos.t){
                       panic!("Union of node to self");
                   }
                   _graph._dsu.unite(neighbour.dsu_ref.clone(), node.dsu_ref.clone());
@@ -132,13 +136,13 @@ pub fn print_cover(_graph: &graph::Graph){
            println!("COMPONENT:");
            for child in &node.children {
                let dsu_node=child.borrow();
-               println!("{x} {y}", x=dsu_node.object.x, y=dsu_node.object.y);
+               println!("{x} {y} {t}", x=dsu_node.object.x, y=dsu_node.object.y,t=dsu_node.object.t);
            }
         }
     }
 }
 
-pub fn export_cover(_graph: &graph::Graph, fname: &String){
+pub fn export_cover(_graph: &graph::Graph, fname: &String, data: &csv::CsvData, _n: usize){
     println!("  -Export file:{s}",s=fname);
     fs::write(fname,""); //Clear or create file
     let mut file = OpenOptions::new()
@@ -156,7 +160,9 @@ pub fn export_cover(_graph: &graph::Graph, fname: &String){
            n_components+=1;
            for child in &node.children {
                let dsu_node=child.borrow();
-               writeln!(file, "{x},{y}", x=dsu_node.object.x, y=dsu_node.object.y);
+               let n_line=dsu_node.object.t.round() as usize;
+               let _a=str2f64(&data.lines[n_line].values[_n]);
+               writeln!(file, "{x},{y},{a}", x=dsu_node.object.x, y=dsu_node.object.y, a=_a);
            }
         }
         n_processed+=1;

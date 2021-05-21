@@ -26,7 +26,7 @@ fn main() {
     let OUTPUT_FOLDER="output/";
     /********************/
     println!("CoverSolver v1.0");
-    let mut _dsu = dsu::DSU::<point2d::Point2D>::new();
+    let mut _dsu = dsu::DSU::<point2d::Point3D>::new();
     let mut _graph = graph::Graph::new();
     let data = csv::read_csv(DATA.to_string());
     let mut n_processed = 0;
@@ -34,9 +34,9 @@ fn main() {
     for line in &data.lines {
         let x=str2f64(&line.values[5]);
         let y=str2f64(&line.values[6]);
-//        println!("x={d}",d=x);
+        let t=f64::from(line.n);
 //        println!("y={d}",d=y);
-        _graph.add_node(x,y);
+        _graph.add_node(x,y,t);
         n_processed+=1;
         ui::print_pb("Adding points               ".to_string(), n_processed, data.n_lines-1);
         //n_processed+=1
@@ -52,6 +52,6 @@ fn main() {
         println!("Processing column {d}", d=i-N_COLUMN);
         cover::build_cover(&mut _graph, &data, i, MU);
         let fname=OUTPUT_FOLDER.to_string()+&i.to_string()+&".txt".to_string();
-        cover::export_cover(&_graph,&fname);
+        cover::export_cover(&_graph,&fname,&data,i);
     }
 }

@@ -4,6 +4,7 @@ use std::path::Path;
 
 pub struct CsvLine{
     pub values: Vec<String>,
+    pub n: i32,
 }
 
 pub struct CsvData{
@@ -12,9 +13,10 @@ pub struct CsvData{
     pub n_lines: i32,
 }
 
-fn make_csv_line(line: String) -> CsvLine{
+fn make_csv_line(line: String, _n: i32) -> CsvLine{
     CsvLine{
         values: copy_str_vector(line.split(",").collect()),
+        n: _n,
     }
 }
 
@@ -35,14 +37,14 @@ where P: AsRef<Path>, {
 pub fn read_csv(fname: String) -> CsvData{
     let mut header: Vec<String> = Vec::new();
     let mut lines = Vec::new();
-    let mut n_lines = 0;
+    let mut n_lines = i32::from(0);
     if let Ok(reader) = read_lines(fname){
         for raw_line in reader{
             if let Ok(line)=raw_line {
                 if n_lines==0 {
                     header = copy_str_vector(line.split(",").collect());
                 }else{
-                    lines.push(make_csv_line(line));
+                    lines.push(make_csv_line(line, n_lines-1));
                 }
             }
             n_lines=n_lines+1;
