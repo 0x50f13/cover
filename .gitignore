@@ -8,3 +8,4 @@ target/*
 *.swo
 *.swb
 *.DS_Store
+.ipynb_checkpoints
