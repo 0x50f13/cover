@@ -1,4 +1,6 @@
 use std::cell::{RefCell, Ref};
+use fork::{daemon, Fork};
+use std::process::Command;
 
 mod graph;
 mod csv;
@@ -48,10 +50,17 @@ fn main() {
     
     cover::build_eps_graph(EPS, &_graph);
     cover::eps_graph_verify(&_graph);
+
+
     for i in N_COLUMN..data.header.len(){
         println!("Processing column {d}", d=i-N_COLUMN);
-        cover::build_cover(&mut _graph, &data, i, MU);
-        let fname=OUTPUT_FOLDER.to_string()+&i.to_string()+&".txt".to_string();
-        cover::export_cover(&_graph,&fname,&data,i);
+        //Delegate copy of graph to all processes as it
+        //would be updated while working with data
+        let mut d_graph = _graph.clone();
+        if let Ok(Fork::Child) = daemon(false, false){
+           cover::build_cover(&mut d_graph, &data, i, MU);
+           let fname=OUTPUT_FOLDER.to_string()+&i.to_string()+&".txt".to_string();
+           cover::export_cover(&_graph,&fname,&data,i);
+        }
     }
 }
