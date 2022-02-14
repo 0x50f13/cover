@@ -1,5 +1,4 @@
 use std::cell::{RefCell, Ref};
-use fork::{daemon, Fork};
 use std::process::Command;
 
 mod graph;
